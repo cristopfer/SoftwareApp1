@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Cargar jQuery desde CDN -->
+    <style>
+        .value-label {
+          color: red;
+          font-weight: bold;
+        }
+        .slider-container {
+          margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Algoritmo Genetico</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/TeoremaBayes.html">Teorema de Bayes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/RedesNeuronales.html">Redes Neuronales</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/ComputerVision.html">Computer Vision</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/LenguajeNatural.html">Lenguaje Natural</a>
+                </li>
+            </ul>
+        </div>
+    </nav><br>
+    <div class="container">
+      <h1>Hallar el maximo de una funcion polinomica</h1>
+      <p>Se tiene el polinomio de grado 3 : f(X) = a3*X^3 + a2*x^2 + a1*X + a0, definido en el intervalo X pertenece [0,63] </p>
+      <p>Ingrese los coeficientes a3, a2, a1 y a0 para calcular el maximo de la funcion</p> <br>
+      <div class="row">
+        <div class="col-md-3">
+          Coeficiente a3<br>
+          <input type="text" id="a3"><br>
+        </div>
+        <div class="col-md-3">
+          Coeficiente a2<br>
+          <input type="text" id="a2"><br>
+        </div>
+        <div class="col-md-3">
+          Coeficiente a1<br>
+          <input type="text" id="a1"><br>
+        </div>
+        <div class="col-md-3">
+          Coeficiente a0<br>
+          <input type="text" id="a0"><br>
+        </div>
+      </div>      
+    </div><br>
+    <div class="container">
+        <h3 class="mb-4">Parámetros del Algoritmo Genético</h3>
+    
+        <div class="slider-container">
+          <label for="poblacion" class="form-label">
+            Tamaño de población: <span class="value-label" id="poblacionValue">4</span>
+          </label>
+          <input type="range" class="form-range" id="poblacion" min="2" max="10" value="4">
+        </div>
+    
+        <div class="slider-container">
+          <label for="cromosoma" class="form-label">
+            Longitud del cromosoma: <span class="value-label" id="cromosomaValue">6</span>
+          </label>
+          <input type="range" class="form-range" id="cromosoma" min="4" max="10" value="6">
+        </div>
+    
+        <div class="slider-container">
+          <label for="generaciones" class="form-label">
+            Generaciones: <span class="value-label" id="generacionesValue">100</span>
+          </label>
+          <input type="range" class="form-range" id="generaciones" min="10" max="500" value="100">
+        </div>
+    
+        <div class="slider-container">
+          <label for="mutacion" class="form-label">
+            Probabilidad de mutación: <span class="value-label" id="mutacionValue">0.20</span>
+          </label>
+          <input type="range" class="form-range" id="mutacion" min="0" max="0.5" step="0.01" value="0.20">
+        </div>
+    
+        <button class="btn btn-primary mt-3" onclick="ejecutarAlgoritmo()">Ejecutar algoritmo</button><br><br>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3"><p>El maximo de la funcion f(x) es: </p></div>
+        <div class="col-md-9"><div style="color: green;" id="maximo"></div></div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Generacion</th>
+              <th>Gen</th>
+              <th>X</th>
+              <th>f(X)</th>
+            </tr>
+          </thead>
+          <tbody id="resultado"></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const poblacionSlider = document.getElementById('poblacion');
+          const cromosomaSlider = document.getElementById('cromosoma');
+          const generacionesSlider = document.getElementById('generaciones');
+          const mutacionSlider = document.getElementById('mutacion');
+    
+          const poblacionValue = document.getElementById('poblacionValue');
+          const cromosomaValue = document.getElementById('cromosomaValue');
+          const generacionesValue = document.getElementById('generacionesValue');
+          const mutacionValue = document.getElementById('mutacionValue');
+
+          poblacionValue.textContent = poblacionSlider.value;
+          cromosomaValue.textContent = cromosomaSlider.value;
+          generacionesValue.textContent = generacionesSlider.value;
+          mutacionValue.textContent = parseFloat(mutacionSlider.value).toFixed(2);
+
+          poblacionSlider.addEventListener('input', () => {
+            poblacionValue.textContent = poblacionSlider.value;
+          });
+    
+          cromosomaSlider.addEventListener('input', () => {
+            cromosomaValue.textContent = cromosomaSlider.value;
+          });
+    
+          generacionesSlider.addEventListener('input', () => {
+            generacionesValue.textContent = generacionesSlider.value;
+          });
+    
+          mutacionSlider.addEventListener('input', () => {
+            mutacionValue.textContent = parseFloat(mutacionSlider.value).toFixed(2);
+          });
+        });
+        function ejecutarAlgoritmo(){
+            var consulta = "";
+            var poblacion = $('#poblacion').val();
+            var cromosoma = $('#cromosoma').val();
+            var generaciones = $('#generaciones').val();
+            var mutacion = $('#mutacion').val();
+            var a3 = $('#a3').val();
+            var a2 = $('#a2').val();
+            var a1 = $('#a1').val();
+            var a0 = $('#a0').val();
+            $("#maximo").empty();
+            $("#resultado").empty();
+            jQuery.ajax({
+                type: 'POST',
+                url: '/algoritmoGen',
+                data: { poblacion: poblacion, cromosoma: cromosoma, generaciones: generaciones, mutacion: mutacion, a3: a3, a2: a2, a1: a1, a0: a0 },
+                success: function(response) {
+                    $("#maximo").append(response.valor); 
+                    for(var i = 0; i < response.iteracion.length; i++)   
+                      consulta += '<tr><td>'+response.iteracion[i].generacion+'</td><td>'+response.iteracion[i].gen+'</td><td>'+response.iteracion[i].x+'</td><td>'+response.iteracion[i].fx+'</td></tr>'               
+                    $("#resultado").append(consulta);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

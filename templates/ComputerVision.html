@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Cargar jQuery desde CDN -->
+    <style>
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .flower-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 150px;
+        }
+        .flower-card img {
+            width: 100%;
+            height: auto;
+        }
+        .container1 { margin: 20px; }
+        #result { margin-top: 20px; font-weight: bold; }
+        #uploadedImage { max-width: 300px; display: block; margin-top: 10px; }
+        .description {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .features {
+            margin-top: 20px;
+        }
+        .feature {
+            background-color: #e8f4f8;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+        .tech {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Algoritmo Genetico</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/TeoremaBayes.html">Teorema de Bayes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/RedesNeuronales.html">Redes Neuronales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/ComputerVision.html">Computer Vision</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/LenguajeNatural.html">Lenguaje Natural</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="description">
+        <h1>Sistema Clasificador de Flores con IA</h1>
+        
+        <p>Esta aplicación utiliza inteligencia artificial para identificar automáticamente entre cinco especies de flores: <strong>margaritas</strong>, <strong>dientes de león</strong>, <strong>rosas</strong>, <strong>girasoles</strong> y <strong>tulipanes</strong>.</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🧠 Tecnología Principal</h3>
+                <p>Emplea <span class="tech">Transfer Learning con MobileNetV2</span>, un modelo avanzado de visión por computadora pre-entrenado, adaptado específicamente para reconocer características botánicas.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📊 Base de Datos</h3>
+                <p>Dataset balanceado con <span class="tech">100 imágenes por especie</span> (500 total), procesadas con aumento de datos para mejorar la precisión.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🖥️ Interfaz Web</h3>
+                <p>Desarrollada con <span class="tech">Flask</span> (backend) y <span class="tech">jQuery</span> (frontend), permite:</p>
+                <ul>
+                    <li>Entrenar/reentrenar el modelo</li>
+                    <li>Subir imágenes para clasificación</li>
+                    <li>Visualizar resultados con nombres científicos</li>
+                </ul>
+            </div>
+            
+            <div class="feature">
+                <h3>⚙️ Funcionamiento Técnico</h3>
+                <p>Las imágenes se preprocesan con <span class="tech">normalización específica para MobileNetV2</span> (224x224 píxeles) y las predicciones se generan en tiempo real, almacenando temporalmente las fotos subidas en <code>/static/uploads</code>.</p>
+            </div>
+        </div>
+        
+        <p>Optimizado para ejecutarse eficientemente en CPUs gracias a la arquitectura ligera de MobileNetV2 y el uso de TensorFlow 2.x.</p>
+    </div>
+    <div class="container mt-8">
+        <h1>Flores del Dataset</h1>
+        <button class="btn btn-primary" id="loadImages">Mostrar 8 imagenes para cada especies</button>
+        <div id="flowerContainer" class="image-container"></div>
+
+        <div class="container1">
+            <h1>Clasificador de Flores con Transfer Learning</h1>
+        
+            <button id="trainBtn">Entrenar Modelo</button>
+            <div id="trainingStatus"></div>
+
+            <h2>Subir Imagen para Predecir</h2>
+            <input type="file" id="flowerImage" accept="image/*">
+            <button id="predictBtn">Predecir</button>
+        
+            <div id="result">
+                <img id="uploadedImage" src="" alt="Imagen subida">
+                <p id="predictionText"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $("#loadImages").click(function() {
+                $.ajax({
+                    url: "/get_flowers",
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success) {
+                            let container = $("#flowerContainer");
+                            container.empty();
+                            response.images.forEach(function(img) {
+                                container.append(`
+                                    <div class="flower-card">
+                                        <img src="${img.path}" alt="${img.class}">
+                                        <p>${img.class}</p>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            alert("Error: " + response.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error en la solicitud: " + error);
+                    }
+                });
+            });
+            $("#trainBtn").click(function() {
+                $("#trainingStatus").text("Entrenando modelo...");
+                $.ajax({
+                    url: "/train",
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success) {
+                            $("#trainingStatus").html(
+                                `<p>Modelo entrenado exitosamente!</p>
+                                <p>Clases: ${response.classes.join(', ')}</p>`
+                            );
+                        } else {
+                            $("#trainingStatus").text("Error: " + response.error);
+                        }
+                    }
+                });
+            });
+
+            // Predecir imagen
+            $("#predictBtn").click(function() {
+                const fileInput = document.getElementById('flowerImage');
+                if (!fileInput.files[0]) {
+                    alert("Por favor selecciona una imagen");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                $("#predictionText").text("Procesando...");
+                
+                $.ajax({
+                    url: "/predict",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            $("#uploadedImage").attr("src", `static/uploads/${response.filename}`);
+                            $("#predictionText").html(`
+                                Predicción: <strong>${response.predicted_class_name}</strong><br>
+                                (Clase ${response.predicted_class})
+                            `);
+                        } else {
+                            $("#predictionText").text("Error: " + response.error);
+                        }
+                    }
+                });
+            });
+        });
+    </script>   
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+
+</body>
+</html>

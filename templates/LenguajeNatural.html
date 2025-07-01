@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title>Análisis de Sentimientos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Cargar jQuery desde CDN -->
+    <style>
+        .resultado { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .positivo { background-color: #d4edda; color: #155724; }
+        .neutral { background-color: #e2e3e5; color: #383d41; }
+        .negativo { background-color: #f8d7da; color: #721c24; }       
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Algoritmo Genetico</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/TeoremaBayes.html">Teorema de Bayes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/RedesNeuronales.html">Redes Neuronales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/ComputerVision.html">Computer Vision</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/LenguajeNatural.html">Lenguaje Natural</a>
+                </li>
+            </ul>
+        </div>
+    </nav>   
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">Analizador de Sentimientos</h1>
+                <p class="lead mb-5">Descubre cómo nuestro sistema analiza emociones y opiniones en textos usando inteligencia artificial</p>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <div class="feature-box">
+                    <div class="tech-icon">🔍</div>
+                    <h3>¿Qué es?</h3>
+                    <p>El análisis de sentimientos es una técnica de Procesamiento de Lenguaje Natural (NLP) que identifica y extrae información subjetiva del texto, determinando si la actitud hacia un tema es positiva, negativa o neutral.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-box">
+                    <div class="tech-icon">💡</div>
+                    <h3>Aplicaciones</h3>
+                    <ul>
+                        <li>Monitoreo de redes sociales</li>
+                        <li>Análisis de reseñas de productos</li>
+                        <li>Soporte al cliente automatizado</li>
+                        <li>Investigación de mercado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h2 class="text-center mb-4">¿Cómo funciona nuestro sistema?</h2>
+                <div style="counter-reset: step;">
+                    <div class="workflow-step">
+                        <h4>Preprocesamiento del texto</h4>
+                        <p>El sistema limpia el texto eliminando palabras irrelevantes (stopwords), signos de puntuación y normaliza las palabras (lematización).</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <h4>Modelo BERT multilingüe</h4>
+                        <p>Utilizamos un modelo de inteligencia artificial avanzado (BERT) entrenado específicamente para entender emociones en múltiples idiomas.</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <h4>Clasificación</h4>
+                        <p>El texto se clasifica en una escala de 1 a 5 estrellas, donde 1-2 es negativo, 3 es neutral y 4-5 es positivo.</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <h4>Resultados</h4>
+                        <p>Presentamos el sentimiento detectado junto con un porcentaje de confianza que indica qué tan seguro está el modelo de su análisis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <h1 class="mb-4">Análisis de Sentimientos</h1>
+        
+        <div class="mb-3">
+            <label for="textoInput" class="form-label">Ingresa tu texto:</label>
+            <textarea class="form-control" id="textoInput" rows="4"></textarea>
+        </div>
+        
+        <button id="analizarBtn" class="btn btn-primary">Analizar Sentimiento</button>
+        
+        <div id="resultado" class="resultado" style="display: none;">
+            <h4>Resultado:</h4>
+            <p><strong>Texto analizado:</strong> <span id="textoAnalizado"></span></p>
+            <p><strong>Sentimiento:</strong> <span id="sentimiento"></span></p>
+            <p><strong>Puntuación:</strong> <span id="estrellas"></span> estrellas</p>
+            <p><strong>Confianza:</strong> <span id="confianza"></span>%</p>
+        </div>       
+    </div> 
+    <script>
+        $(document).ready(function() {
+            $('#analizarBtn').click(function() {
+                const texto = $('#textoInput').val().trim();      
+                if (!texto) {
+                    mostrarError("Por favor ingresa un texto para analizar.");
+                    return;
+                }
+                $('#analizarBtn').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Analizando...');       
+                $.ajax({
+                    url: '/analizar',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ texto: texto }),
+                    success: function(response) {
+                        $('#analizarBtn').html('Analizar Sentimiento');
+                
+                        if (response.error) {
+                            mostrarError(response.error);
+                            return;
+                        }
+                
+                        mostrarResultado(response);
+                    },
+                    error: function(xhr) {
+                        $('#analizarBtn').html('Analizar Sentimiento');
+                        mostrarError("Error al conectar con el servidor: " + xhr.statusText);
+                    }
+                });            
+            });
+        function mostrarResultado(data) {
+            $('#error').hide();  
+            $('#textoAnalizado').text(data.texto);
+            $('#sentimiento').text(data.sentimiento).removeClass('positivo neutral negativo').addClass(data.sentimiento);
+            $('#estrellas').text(data.estrellas);
+            $('#confianza').text((data.confianza * 100).toFixed(2));   
+            $('#resultado').removeClass('positivo neutral negativo').addClass(data.sentimiento).show();
+        }
+        function mostrarError(mensaje) {
+            $('#resultado').hide();
+            $('#error').text(mensaje).show();
+        }
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+</body>
+</html>

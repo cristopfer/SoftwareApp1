@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Cargar jQuery desde CDN -->
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Algoritmo Genetico</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/TeoremaBayes.html">Teorema de Bayes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/RedesNeuronales.html">Redes Neuronales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ComputerVision.html">Computer Vision</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/LenguajeNatural.html">Lenguaje Natural</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Descripción del Programa</h2>
+                <p>
+                Este programa es una interfaz web interactiva diseñada para <strong>calcular la probabilidad del resultado de un test médico</strong> 
+                (ya sea "Positivo" o "Negativo") en función de ciertas características del paciente. A continuación, se detallan sus componentes y funcionamiento:
+                </p>
+
+                <h2>1. Tabla de Datos de Pacientes</h2>
+                <p>
+                En la parte superior, se muestra una tabla con un conjunto de datos que representan registros de pacientes. 
+                Cada fila corresponde a un paciente y contiene la siguiente información:
+                </p>
+                <ul>
+                    <li><strong>Género</strong>: Masculino o Femenino.</li>
+                    <li><strong>Fumador</strong>: Sí o No.</li>
+                    <li><strong>Actividad Física</strong>: Nivel de actividad física del paciente (por ejemplo, Alta o Media).</li>
+                    <li><strong>Tiene Enfermedad</strong>: Indica si el paciente tiene alguna enfermedad (Sí o No).</li>
+                    <li><strong>Resultado Test</strong>: Resultado del test médico realizado al paciente (Positivo o Negativo).</li>
+                </ul>
+                <p>
+                Esta tabla sirve como <strong>base de datos de entrenamiento</strong> para inferir probabilidades con base en nuevos datos ingresados por el usuario.
+                </p>
+
+                <h2>2. Formulario de Predicción</h2>
+                <p>
+                    Debajo de la tabla hay un formulario titulado: <strong>“Hallar la probabilidad del resultado dado”</strong>.
+                </p>
+                <p>
+                    Este formulario permite al usuario seleccionar una combinación de características del paciente, incluyendo:
+                </p>
+                <ul>
+                    <li><strong>Género</strong>: Puede elegir entre "Masculino", "Femenino" o "Ninguno".</li>
+                    <li><strong>Fumador</strong>: Selección entre "Sí" o "No".</li>
+                    <li><strong>Actividad Física</strong>: Nivel de actividad física (por ejemplo, Alta, Media, etc.).</li>
+                    <li><strong>Tiene Enfermedad</strong>: Indica si se considera que el paciente tiene o no una enfermedad.</li>
+                </ul>
+                <p>
+                    Una vez seleccionados estos valores, el usuario puede hacer clic en el botón <strong>“Filtrar”</strong>.
+                </p>
+
+                <h2>3. Cálculo de la Probabilidad</h2>
+                <p>
+                    Al presionar el botón "Filtrar", el sistema <strong>calcula la probabilidad de que el resultado del test sea “Positivo” o “Negativo”</strong> 
+                    para un paciente con las características seleccionadas.
+                </p>
+                <p>
+                    Este cálculo probablemente se basa en el <strong>Teorema de Bayes</strong>, una técnica estadística que permite estimar probabilidades 
+                    condicionales a partir de datos históricos. Es decir, estima:
+                </p>
+                    <pre><code>P(Resultado | Características del paciente)</code></pre>
+                <p>
+                    Por ejemplo, si seleccionas:
+                    <ul>
+                        <li>Fumador: Sí</li>
+                        <li>Actividad Física: Alta</li>
+                        <li>Tiene Enfermedad: No</li>
+                    </ul>
+                    El sistema buscará en la tabla cuántos pacientes cumplen esas condiciones y cuántos de ellos obtuvieron un resultado 
+                    <strong>positivo</strong> o <strong>negativo</strong>, y con eso calculará la <strong>probabilidad condicional</strong> de cada resultado.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <h1>Datos de Pacientes</h1><br>
+        <p></p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    {% for column in table[0].keys() %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container mt-5">
+        <h2 class="mb-4">Hallar la probabilidad del resultado dado</h2>
+        <div class="mb-3">
+            <label for="genero" class="form-label">Género</label>
+            <select class="form-select" id="genero">
+                <option selected disabled>Seleccione...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Ninguno</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="fumador" class="form-label">Fumador</label>
+            <select class="form-select" id="fumador">
+                <option selected disabled>Seleccione...</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+                <option value="Otro">Ninguno</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="actividadFisica" class="form-label">Actividad Física</label>
+            <select class="form-select" id="actividadFisica">
+                <option selected disabled>Seleccione...</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+                <option value="Otro">Ninguno</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tieneEnfermedad" class="form-label">Tiene Enfermedad</label>
+            <select class="form-select" id="tieneEnfermedad">
+                <option selected disabled>Seleccione...</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+                <option value="Otro">Ninguno</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" id="hallar">Hallar la probabilidad</button><br><br>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"><p>La probabilidad del resultado de test negativo dado los parametros escogidos es : </p></div>
+                <div class="col-md-3"><div style="color: green;" id="testNeg"></div></div>
+                <div class="col-md-6" id="test1">Esto se traduce a que dado los parametros y su valor seleccionado existe una probabilidad <strong id="testN"></strong>% de probabilidad de que obtenga un resultado negativo en el test</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><p>La probabilidad del resultado de test positivo dado los parametros escogidos es : </p></div>
+                <div class="col-md-3"><div style="color: green;" id="testPos"></div></div>
+                <div class="col-md-6" id="test2">Esto se traduce a que dado los parametros y su valor seleccionado existe una probabilidad <strong id="testP"></strong>% de probabilidad de que obtenga un resultado positivo en el test</div>
+            </div>
+        </div>
+    </div>
+    <script> 
+        $("#test1").hide();       
+        $("#test2").hide();  
+        $("#hallar").click(function() {
+            valor = { genero: $("#genero").val(), fumador: $("#fumador").val(), actividadFisica: $("#actividadFisica").val(), tieneEnfermedad: $("#tieneEnfermedad").val()}
+            $("#testNeg").empty();
+            $("#testPos").empty();
+            $("#testN").empty();
+            $("#testP").empty();
+            jQuery.ajax({
+                type: 'POST',
+                url: '/teoremaBayes',
+                data: valor,
+                success: function(response) {
+                    $("#testNeg").append(response.resultado1); 
+                    $("#testPos").append(response.resultado2);   
+                    $("#test1").show();       
+                    $("#test2").show(); 
+                    $("#testN").append(parseFloat(response.resultado1)*100); 
+                    $("#testP").append(parseFloat(response.resultado2)*100);           
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+
+</body>
+</html>

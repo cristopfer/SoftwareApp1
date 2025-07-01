@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Cargar jQuery desde CDN -->
+    <style>
+        .value-label {
+          color: red;
+          font-weight: bold;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .container1 {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Algoritmo Genetico</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/TeoremaBayes.html">Teorema de Bayes</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/RedesNeuronales.html">Redes Neuronales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ComputerVision.html">Computer Vision</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/LenguajeNatural.html">Lenguaje Natural</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+    <div class="container1">
+        <h1>Implementación de Circuito Digital de N Entradas con Red Neuronal</h1>
+        
+        <h2>Descripción del Problema</h2>
+        <p>Entrenar una red neuronal con backpropagation para emular el comportamiento de un circuito digital con <em>n</em> entradas binarias y una salida.</p>
+        
+        <h2>Especificaciones Técnicas</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>Componente</th>
+                <th>Descripción</th>
+            </tr>
+            <tr>
+                <td>Entradas</td>
+                <td>Vector binario X = (x₁, x₂, ..., xₙ) donde xᵢ ∈ {0, 1}</td>
+            </tr>
+            <tr>
+                <td>Salida</td>
+                <td>y = 1 o 0</td>
+            </tr>
+            <tr>
+                <td>Tamaño del dataset</td>
+                <td>2ⁿ combinaciones posibles</td>
+            </tr>
+            <tr>
+                <td>Funcion de activación</td>
+                <td>Sigmoide</td>
+            </tr>
+        </table>
+        
+        <h2>Arquitectura de la Red Neuronal</h2>
+        <table>
+            <tr>
+                <th>Capa</th>
+                <th>Neuronas</th>
+            </tr>
+            <tr>
+                <td>Entrada</td>
+                <td>n</td>
+            </tr>
+            <tr>
+                <td>Oculta (opcional)</td>
+                <td>n</td>
+            </tr>
+            <tr>
+                <td>Salida</td>
+                <td>1</td>
+            </tr>
+        </table>
+    </div>
+    </div>
+    <div class="container mt-5">
+        <div class="slider-container">
+            <label for="entrada" class="form-label">
+                Numero de entrada: <span class="value-label" id="entradaValue">4</span>
+            </label>
+            <input type="range" class="form-range" id="entrada" min="2" max="8" value="4"><br>
+        </div>
+        <div class="slider-container">
+            <label for="genero" class="form-label">Capas ocultas</label>
+            <input type="text" class="form-input" id="capaOculta"> Ejemplo 3,2,4 (3 capas ocultas de 3,2 y 4 neuronas en cada capa oculta)<br>
+        </div>
+        <div class="slider-container">
+            <label for="tasa" class="form-label">
+                Tasa de aprendizaje: <span class="value-label" id="tasaValue">0.20</span>
+            </label>
+            <input type="range" class="form-range" id="tasa" min="0" max="0.25" step="0.01" value="0.20"><br>
+        </div>
+        <div class="slider-container">
+            <label for="epoca" class="form-label">
+                Numero de epocas: <span class="value-label" id="epocaValue">100</span>
+            </label>
+            <input type="range" class="form-range" id="epoca" min="1" max="10000" value="100"><br><br>
+        </div>
+        <button class="btn btn-primary" id="hallar">Ver resultado</button><br><br>
+    </div><br><br>
+    <div class="container">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Entrada</th>
+                        <th>Prediccion</th>
+                        <th>Salida (esperada)</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado"></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        const entradaSlider = document.getElementById('entrada');
+        const tasaSlider = document.getElementById('tasa');
+        const epocaSlider = document.getElementById('epoca');
+
+        const entradaValue = document.getElementById('entradaValue');
+        const tasaValue = document.getElementById('tasaValue');
+        const epocaValue = document.getElementById('epocaValue');
+
+        entradaValue.textContent = entradaSlider.value;
+        tasaValue.textContent = tasaSlider.value;
+        epocaValue.textContent = epocaSlider.value;
+
+        entradaSlider.addEventListener('input', () => {
+            entradaValue.textContent = entradaSlider.value;
+        });
+        tasaSlider.addEventListener('input', () => {
+            tasaValue.textContent = parseFloat(tasaSlider.value).toFixed(2);
+        });
+        epocaSlider.addEventListener('input', () => {
+            epocaValue.textContent = epocaSlider.value;
+        });
+        $("#hallar").click(function() {
+            var consulta = "";
+            valor = { entrada: $("#entrada").val(), capaOculta: $("#capaOculta").val(), tasa: $("#tasa").val(), epoca: $("#epoca").val()}
+            $("#resultado").empty();
+            jQuery.ajax({
+                type: 'POST',
+                url: '/entrenar-and',
+                data: valor,
+                success: function(response) {
+                    //JSON.stringify(response.resultados.map(r => r.prediccion));
+                    for(var i = 0; i < response.resultados.length; i++)   
+                        consulta += '<tr><td>'+response.resultados[i].entrada+'</td><td>'+response.resultados[i].prediccion+'</td><td>'+response.resultados[i].esperado+'</td></tr>'
+                    $("#resultado").append(consulta);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+
+</body>
+</html>
